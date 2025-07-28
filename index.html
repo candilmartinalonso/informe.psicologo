@@ -3,159 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informe para el Psicólogo</title>
+    <title>Generador de Prompts para el Psicólogo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Keyframe animations for visual effects */
+        /* Reseteo básico y box-sizing para consistencia en el layout */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Keyframe animations para efectos visuales sutiles */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); } /* Slightly reduced pulse for subtler effect */
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        @keyframes slideInUp { /* New animation for report */
+        @keyframes slideInUp { /* Animación para que el informe aparezca suavemente */
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Basic styling for the body and overall layout */
+        /* Estilos generales del cuerpo y layout principal */
         body {
-            font-family: 'Inter', sans-serif; /* Using Inter font as per instructions */
-            background: linear-gradient(135deg, #e0f7fa, #fce4ec); /* Soft gradient background */
+            font-family: 'Inter', sans-serif; /* Fuente Inter para una apariencia limpia */
+            background: linear-gradient(135deg, #e0f7fa, #fce4ec); /* Fondo degradado suave */
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Use min-height to ensure it fills viewport but can expand */
+            min-height: 100vh; /* Asegura que ocupe al menos toda la altura de la vista */
             margin: 0;
-            padding: 1rem; /* Add padding for small screens */
-            box-sizing: border-box; /* Include padding in element's total width and height */
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            padding: 1rem; /* Espaciado para pantallas pequeñas */
+            overflow-x: hidden; /* Evita el scroll horizontal */
         }
 
-        /* Card container styling */
+        /* Estilo del contenedor principal (tarjeta) */
         .card {
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             padding: 2rem;
             max-width: 600px;
-            width: 95%; /* Make it more fluid on smaller screens */
-            animation: fadeIn 0.8s ease;
-            position: relative;
-            display: flex; /* Use flexbox for internal layout */
+            width: 95%; /* Flexibilidad en el ancho para distintos tamaños de pantalla */
+            animation: fadeIn 0.8s ease; /* Animación de aparición de la tarjeta */
+            display: flex; /* Utiliza flexbox para organizar los elementos internos */
             flex-direction: column;
-            gap: 1rem; /* Space between elements */
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for card */
+            gap: 1rem; /* Espacio entre los elementos de la tarjeta */
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves al interactuar */
         }
 
-        .card:hover { /* Subtle lift and shadow on hover for the card */
+        .card:hover { /* Efecto sutil al pasar el ratón sobre la tarjeta */
             transform: translateY(-5px);
             box-shadow: 0 12px 30px rgba(0,0,0,0.15);
         }
 
-        /* Heading styling */
+        /* Estilo del título */
         h1 {
-            margin-bottom: 0.5rem; /* Adjust margin */
-            color: #d81b60;
+            margin-bottom: 0.5rem;
+            color: #d81b60; /* Color distintivo */
             text-align: center;
             font-size: 1.8rem;
-            animation: fadeIn 1s ease;
+            animation: fadeIn 1s ease; /* Animación de aparición del título */
         }
 
-        /* Textarea styling */
+        /* Estilo del área de texto */
         textarea {
             width: 100%;
-            height: 160px; /* Slightly increased height */
+            height: 160px; /* Altura predefinida */
             padding: 0.75rem;
             border: 2px solid #ccc;
-            border-radius: 8px; /* Slightly more rounded */
-            resize: vertical;
+            border-radius: 8px;
+            resize: vertical; /* Permite redimensionar verticalmente */
             margin-bottom: 0.5rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            animation: fadeIn 1.2s ease;
-            box-sizing: border-box; /* Include padding in width */
+            transition: border-color 0.3s, box-shadow 0.3s; /* Transición al enfocar */
+            animation: fadeIn 1.2s ease; /* Animación de aparición del textarea */
         }
 
         textarea:focus {
-            border-color: #d81b60;
-            box-shadow: 0 0 8px rgba(216,27,96,0.3);
-            outline: none;
+            border-color: #d81b60; /* Color del borde al enfocar */
+            box-shadow: 0 0 8px rgba(216,27,96,0.3); /* Sombra al enfocar */
+            outline: none; /* Elimina el contorno predeterminado del navegador */
         }
 
-        /* Button styling */
+        /* Estilo del botón */
         button {
-            display: flex; /* Use flex to center content including loader */
+            display: flex; /* Para centrar contenido (no hay loader en esta versión) */
             justify-content: center;
             align-items: center;
             width: 100%;
             padding: 0.75rem;
-            background: #d81b60;
+            background: #d81b60; /* Color de fondo del botón */
             color: #fff;
             border: none;
-            border-radius: 8px; /* Slightly more rounded */
+            border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            transition: background 0.3s, transform 0.3s, box-shadow 0.3s; /* Added transform and shadow for pulse effect */
-            animation: fadeIn 1.4s ease;
-            position: relative; /* For loader positioning */
+            transition: background 0.3s, transform 0.3s, box-shadow 0.3s; /* Transiciones suaves al interactuar */
+            animation: fadeIn 1.4s ease; /* Animación de aparición del botón */
         }
 
         button:disabled {
-            background: #f8bbd0;
-            cursor: not-allowed; /* Clearer disabled state */
-            transform: none; /* Disable transform when disabled */
-            box-shadow: none; /* Disable shadow when disabled */
+            background: #f8bbd0; /* Estilo para botón deshabilitado */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         button:not(:disabled):hover {
-            background: #c2185b;
-            transform: translateY(-2px); /* Slight lift on hover */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Add shadow on hover */
+            background: #c2185b; /* Color de fondo al pasar el ratón */
+            transform: translateY(-2px); /* Pequeño levantamiento al pasar el ratón */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Sombra al pasar el ratón */
         }
 
-        button:not(:disabled):active { /* Press effect */
+        button:not(:disabled):active { /* Efecto al presionar el botón */
             transform: translateY(1px);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-
-        /* Report output area */
+        /* Área de salida del informe */
         #informe {
-            margin-top: 1rem; /* Adjust margin */
+            margin-top: 1rem;
             background: #fafafa;
             padding: 1rem;
-            border-left: 4px solid #d81b60;
+            border-left: 4px solid #d81b60; /* Barra lateral distintiva */
             border-radius: 4px;
-            white-space: pre-wrap; /* Preserve whitespace and line breaks */
-            opacity: 0;
-            min-height: 80px; /* Ensure visibility even if empty initially */
-            overflow-y: auto; /* Add scroll if content overflows */
-            max-height: 300px; /* Limit height for longer reports */
+            white-space: pre-wrap; /* Preserva los espacios en blanco y saltos de línea del texto */
+            opacity: 0; /* Inicialmente oculto para la animación */
+            min-height: 80px; /* Altura mínima para visibilidad */
+            overflow-y: auto; /* Permite scroll si el contenido es largo */
+            max-height: 300px; /* Altura máxima para el scroll */
+            word-break: break-word; /* Rompe palabras largas si es necesario */
         }
-        /* Apply slideInUp animation when informe content appears */
+        /* Aplica la animación cuando el informe es visible */
         #informe.show {
             animation: slideInUp 1s ease forwards;
         }
 
-
-        /* Loading spinner styling */
-        .loading {
-            display: inline-block;
-            width: 18px; /* Slightly larger spinner */
-            height: 18px;
-            border: 2px solid #fff;
-            border-top: 2px solid rgba(255,255,255,0.4); /* Softer top border for spinner effect */
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-left: 0.75rem; /* More space from text */
-            vertical-align: middle;
-        }
-
-        /* Responsive adjustments */
+        /* Ajustes responsivos para pantallas más pequeñas */
         @media (max-width: 640px) {
             .card {
                 padding: 1.5rem;
@@ -171,9 +152,9 @@
 </head>
 <body>
     <div class="card">
-        <h1>Informe para el Psicólogo</h1>
-        <textarea id="entrada" placeholder="Comparte tus pensamientos y emociones del día. Por ejemplo: Hoy me siento un poco ansioso por el trabajo, pero también emocionado por un proyecto nuevo."></textarea>
-        <button id="generar" disabled>Generar Informe</button>
+        <h1>Generador de Prompts para el Psicólogo</h1>
+        <textarea id="entrada" placeholder="Describe cómo te sientes hoy, tus pensamientos y emociones."></textarea>
+        <button id="generar" disabled>Generar Prompt para IA</button>
         <div id="informe"></div>
     </div>
 
@@ -182,94 +163,38 @@
         const genBtn = document.getElementById('generar');
         const informeEl = document.getElementById('informe');
 
-        // API key will be provided by the Canvas environment at runtime.
-        // It's intentionally left as an empty string here.
-        const API_KEY = ""; 
-
-        // Enable/disable button based on textarea content
+        // Habilita o deshabilita el botón 'Generar Prompt' basado en si hay texto en el área de entrada.
         entradaEl.addEventListener('input', () => {
-            genBtn.disabled = !entradaEl.value.trim();
+            genBtn.disabled = entradaEl.value.trim() === '';
         });
 
-        /**
-         * Implements exponential backoff for API retries.
-         * @param {function} fn - The function to retry.
-         * @param {number} retries - The maximum number of retries.
-         * @param {number} delay - The initial delay in milliseconds.
-         */
-        async function exponentialBackoff(fn, retries = 5, delay = 1000) {
-            try {
-                return await fn();
-            } catch (error) {
-                if (retries > 0) {
-                    await new Promise(res => setTimeout(res, delay));
-                    return exponentialBackoff(fn, retries - 1, delay * 2);
-                } else {
-                    throw error;
-                }
-            }
-        }
-
-        genBtn.addEventListener('click', async () => {
+        // Maneja el clic en el botón 'Generar Prompt'.
+        genBtn.addEventListener('click', () => {
             const userText = entradaEl.value.trim();
-            if (!userText) return; // Don't proceed if text is empty
 
-            genBtn.disabled = true;
-            informeEl.textContent = ''; // Clear previous report
-            informeEl.classList.remove('show'); // Remove 'show' class to reset animation
-            const loader = document.createElement('span');
-            loader.className = 'loading';
-            genBtn.innerHTML = 'Generando... '; // Set text before appending loader
-            genBtn.appendChild(loader);
-
-            try {
-                // Define the API call function for exponential backoff
-                const callApi = async () => {
-                    const payload = {
-                        contents: [{
-                            parts: [{ text: `Hola. Basado en mis siguientes pensamientos y emociones, por favor, escribe un informe **conciso y humanizado** en **primera persona**, como si yo le estuviera hablando directamente a mi psicólogo. Haz hincapié en **cómo me siento** y resume los puntos clave y mis emociones más importantes de manera natural y entendible, con un tono conversacional y directo. Aquí están mis pensamientos y sentimientos: "${userText}"` }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.7,
-                            topP: 0.8
-                        }
-                    };
-
-                    // Construct the API URL here, so the API_KEY can be correctly processed by the Canvas environment.
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
-                    
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`Error API: ${response.status} - ${errorData.error?.message || response.statusText}`);
-                    }
-                    return response.json();
-                };
-
-                const data = await exponentialBackoff(callApi);
-
-                if (data.candidates && data.candidates.length > 0 &&
-                    data.candidates[0].content && data.candidates[0].content.parts &&
-                    data.candidates[0].content.parts.length > 0) {
-                    const output = data.candidates[0].content.parts[0].text;
-                    informeEl.textContent = output;
-                    informeEl.classList.add('show'); // Add 'show' class to trigger animation
-                } else {
-                    informeEl.textContent = 'No se recibió una respuesta válida de la IA.';
-                }
-            } catch (err) {
-                console.error("Error al generar informe:", err);
-                informeEl.textContent = `Error: ${err.message || 'No se pudo contactar al servicio de IA. Intenta de nuevo más tarde.'}`;
-            } finally {
-                // Restore button state
-                genBtn.innerHTML = 'Generar Informe';
-                genBtn.disabled = false;
+            // Si no hay texto, no hace nada.
+            if (!userText) {
+                return;
             }
+
+            // Deshabilita el botón y limpia/resetea el área del informe para una nueva generación.
+            genBtn.disabled = true;
+            informeEl.textContent = '';
+            informeEl.classList.remove('show'); // Quita la clase para que la animación se reinicie si ya estaba visible.
+
+            // Construye el prompt para la IA. Este es el texto que el usuario pegará en la IA.
+            const promptForAI = `
+Actúa como una persona que va a hablar con su psicólogo. Basándote en los siguientes pensamientos y sentimientos, escribe un párrafo conciso, muy natural y en primera persona, centrándote en cómo me siento hoy. No incluyas saludos ni despedidas, solo el párrafo principal:
+
+"${userText}"
+            `.trim(); // Usamos .trim() para limpiar espacios extra al inicio/final.
+
+            // Establece el texto del informe como el prompt generado y activa la animación.
+            informeEl.textContent = promptForAI;
+            informeEl.classList.add('show');
+
+            // Vuelve a habilitar el botón una vez que el prompt se ha generado.
+            genBtn.disabled = false;
         });
     </script>
 </body>

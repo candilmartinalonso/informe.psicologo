@@ -6,147 +6,90 @@
     <title>Generador de Prompts para el Psicólogo</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Reseteo básico y box-sizing para consistencia en el layout */
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
-        /* Keyframe animations para efectos visuales sutiles */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideInUp { /* Animación para que el informe aparezca suavemente */
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Estilos generales del cuerpo y layout principal */
+        /* 1. Considerar mover estilos críticos a archivo CSS externo para mejorar caché */
+        *, *::before, *::after { box-sizing: border-box; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         body {
-            font-family: 'Inter', sans-serif; /* Fuente Inter para una apariencia limpia */
-            background: linear-gradient(135deg, #e0f7fa, #fce4ec); /* Fondo degradado suave */
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #fce4ec);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Asegura que ocupe al menos toda la altura de la vista */
+            min-height: 100vh;
             margin: 0;
-            padding: 1rem; /* Espaciado para pantallas pequeñas */
-            overflow-x: hidden; /* Evita el scroll horizontal */
+            padding: 1rem;
+            overflow-x: hidden;
         }
-
-        /* Estilo del contenedor principal (tarjeta) */
         .card {
             background: #fff;
             border-radius: 12px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             padding: 2rem;
             max-width: 600px;
-            width: 95%; /* Flexibilidad en el ancho para distintos tamaños de pantalla */
-            animation: fadeIn 0.8s ease; /* Animación de aparición de la tarjeta */
-            display: flex; /* Utiliza flexbox para organizar los elementos internos */
+            width: 95%;
+            animation: fadeIn 0.8s ease;
+            display: flex;
             flex-direction: column;
-            gap: 1rem; /* Espacio entre los elementos de la tarjeta */
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves al interactuar */
+            gap: 1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-
-        .card:hover { /* Efecto sutil al pasar el ratón sobre la tarjeta */
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-        }
-
-        /* Estilo del título */
+        .card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
         h1 {
             margin-bottom: 0.5rem;
-            color: #d81b60; /* Color distintivo */
+            color: #d81b60;
             text-align: center;
             font-size: 1.8rem;
-            animation: fadeIn 1s ease; /* Animación de aparición del título */
+            animation: fadeIn 1s ease;
         }
-
-        /* Estilo del área de texto */
         textarea {
             width: 100%;
-            height: 160px; /* Altura predefinida */
+            height: 160px;
             padding: 0.75rem;
             border: 2px solid #ccc;
             border-radius: 8px;
-            resize: vertical; /* Permite redimensionar verticalmente */
+            resize: vertical;
             margin-bottom: 0.5rem;
-            transition: border-color 0.3s, box-shadow 0.3s; /* Transición al enfocar */
-            animation: fadeIn 1.2s ease; /* Animación de aparición del textarea */
+            transition: border-color 0.3s, box-shadow 0.3s;
+            animation: fadeIn 1.2s ease;
         }
-
-        textarea:focus {
-            border-color: #d81b60; /* Color del borde al enfocar */
-            box-shadow: 0 0 8px rgba(216,27,96,0.3); /* Sombra al enfocar */
-            outline: none; /* Elimina el contorno predeterminado del navegador */
-        }
-
-        /* Estilo del botón */
+        textarea:focus { border-color: #d81b60; box-shadow: 0 0 8px rgba(216,27,96,0.3); outline: none; }
         button {
-            display: flex; /* Para centrar contenido (no hay loader en esta versión) */
+            display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
             padding: 0.75rem;
-            background: #d81b60; /* Color de fondo del botón */
+            background: #d81b60;
             color: #fff;
             border: none;
             border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            transition: background 0.3s, transform 0.3s, box-shadow 0.3s; /* Transiciones suaves al interactuar */
-            animation: fadeIn 1.4s ease; /* Animación de aparición del botón */
+            transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+            animation: fadeIn 1.4s ease;
         }
-
-        button:disabled {
-            background: #f8bbd0; /* Estilo para botón deshabilitado */
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        button:not(:disabled):hover {
-            background: #c2185b; /* Color de fondo al pasar el ratón */
-            transform: translateY(-2px); /* Pequeño levantamiento al pasar el ratón */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Sombra al pasar el ratón */
-        }
-
-        button:not(:disabled):active { /* Efecto al presionar el botón */
-            transform: translateY(1px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* Área de salida del informe */
+        button:disabled { background: #f8bbd0; cursor: not-allowed; transform: none; box-shadow: none; }
+        button:not(:disabled):hover { background: #c2185b; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        button:not(:disabled):active { transform: translateY(1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         #informe {
             margin-top: 1rem;
             background: #fafafa;
             padding: 1rem;
-            border-left: 4px solid #d81b60; /* Barra lateral distintiva */
+            border-left: 4px solid #d81b60;
             border-radius: 4px;
-            white-space: pre-wrap; /* Preserva los espacios en blanco y saltos de línea del texto */
-            opacity: 0; /* Inicialmente oculto para la animación */
-            min-height: 80px; /* Altura mínima para visibilidad */
-            overflow-y: auto; /* Permite scroll si el contenido es largo */
-            max-height: 300px; /* Altura máxima para el scroll */
-            word-break: break-word; /* Rompe palabras largas si es necesario */
+            white-space: pre-wrap;
+            opacity: 0;
+            min-height: 80px;
+            overflow-y: auto;
+            max-height: 300px;
+            word-break: break-word;
         }
-        /* Aplica la animación cuando el informe es visible */
-        #informe.show {
-            animation: slideInUp 1s ease forwards;
-        }
-
-        /* Ajustes responsivos para pantallas más pequeñas */
+        #informe.show { animation: slideInUp 1s ease forwards; }
         @media (max-width: 640px) {
-            .card {
-                padding: 1.5rem;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            textarea {
-                height: 120px;
-            }
+            .card { padding: 1.5rem; }
+            h1 { font-size: 1.5rem; }
+            textarea { height: 120px; }
         }
     </style>
 </head>
@@ -157,43 +100,26 @@
         <button id="generar" disabled>Generar Prompt para IA</button>
         <div id="informe"></div>
     </div>
-
     <script>
+        // 2. Cachear selectores fuera de manejadores para evitar búsquedas repetidas en el DOM
         const entradaEl = document.getElementById('entrada');
         const genBtn = document.getElementById('generar');
         const informeEl = document.getElementById('informe');
-
-        // Habilita o deshabilita el botón 'Generar Prompt' basado en si hay texto en el área de entrada.
+        // 3. Considerar debounce en evento 'input' para mejorar rendimiento en entradas rápidas
         entradaEl.addEventListener('input', () => {
             genBtn.disabled = entradaEl.value.trim() === '';
         });
-
-        // Maneja el clic en el botón 'Generar Prompt'.
         genBtn.addEventListener('click', () => {
             const userText = entradaEl.value.trim();
-
-            // Si no hay texto, no hace nada.
-            if (!userText) {
-                return;
-            }
-
-            // Deshabilita el botón y limpia/resetea el área del informe para una nueva generación.
+            if (!userText) return;
+            // 4. Deshabilitar el botón antes de operaciones pesadas y reactivar al finalizar
             genBtn.disabled = true;
             informeEl.textContent = '';
-            informeEl.classList.remove('show'); // Quita la clase para que la animación se reinicie si ya estaba visible.
-
-            // Construye el prompt para la IA. Este es el texto que el usuario pegará en la IA.
-            const promptForAI = `
-Actúa como una persona que va a hablar con su psicólogo. Basándote en los siguientes pensamientos y sentimientos, escribe un párrafo conciso, muy natural y en primera persona, centrándote en cómo me siento hoy. No incluyas saludos ni despedidas, solo el párrafo principal:
-
-"${userText}"
-            `.trim(); // Usamos .trim() para limpiar espacios extra al inicio/final.
-
-            // Establece el texto del informe como el prompt generado y activa la animación.
+            informeEl.classList.remove('show');
+            const promptForAI = `Actúa como si fueras mi voz interior hablando con mi psicólogo. A partir de los siguientes pensamientos y emociones: "${userText}" Redacta en primera persona un párrafo breve, sincero y auténtico que describa mis sentimientos actuales de forma clara y concisa. No incluyas saludos, despedidas ni explicaciones adicionales.`;
+            // 5. Podría modularizar la generación de prompt en una función separada para escalabilidad
             informeEl.textContent = promptForAI;
             informeEl.classList.add('show');
-
-            // Vuelve a habilitar el botón una vez que el prompt se ha generado.
             genBtn.disabled = false;
         });
     </script>

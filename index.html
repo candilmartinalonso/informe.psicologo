@@ -1,181 +1,235 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+      Archivo mejorado para el proyecto informe.psicologo.
+      Optimiza el diseño del generador de prompts y agrega
+      animaciones y efectos adicionales como una escritura
+      progresiva del texto generado y retroalimentación visual
+      al copiar el contenido. Se emplean variables CSS para
+      facilitar la personalización de colores y estilos.
+    -->
     <title>Generador de Prompts para Psicólogo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Tipografía -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        *, *::before, *::after { box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg,#e0f7fa,#fce4ec);
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-        .card {
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0,0,0,.10);
-            padding: 2.2rem 2rem 2rem 2rem;
-            max-width: 650px;
-            width: 95%;
-            display: flex;
-            flex-direction: column;
-            gap: 1.1rem;
-            animation: fadeIn .8s;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: translateY(0);} }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
-        h1 {
-            color: #d81b60;
-            text-align: center;
-            font-size: 1.9rem;
-            margin-bottom: .2rem;
-            animation: fadeIn 1s;
-        }
-        .desc {
-            text-align:center;
-            color:#555;
-            font-size:.98rem;
-            margin-bottom:.2rem;
-        }
-        textarea {
-            width: 100%;
-            height: 140px;
-            padding: .8rem;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            resize: vertical;
-            font-size: 1rem;
-            margin-bottom: .5rem;
-            transition: border-color .3s, box-shadow .3s;
-        }
-        textarea:focus {
-            border-color: #d81b60;
-            box-shadow: 0 0 8px rgba(216,27,96,.2);
-            outline: none;
-        }
-        .btns{
-            display:flex;
-            gap:.8rem;
-        }
-        button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: .75rem 1.1rem;
-            background: #d81b60;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background .3s, transform .3s, box-shadow .3s;
-        }
-        button:disabled {
-            background: #f8bbd0;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        button:not(:disabled):hover {
-            background: #c2185b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,.12);
-        }
-        #informe {
-            margin-top: .5rem;
-            background: #f9f9fb;
-            padding: 1rem;
-            border-left: 4px solid #d81b60;
-            border-radius: 6px;
-            min-height: 80px;
-            max-height: 320px;
-            white-space: pre-wrap;
-            overflow-y: auto;
-            font-size:1.04rem;
-            opacity:0;
-        }
-        #informe.show { animation: slideInUp 1s forwards; opacity:1; }
-        .copiado {
-            color: #388e3c;
-            font-size: .92rem;
-            margin-top: .25rem;
-            text-align: right;
-            transition: opacity .4s;
-        }
-        @media (max-width: 700px) {
-            .card { padding: 1.3rem;}
-            h1 { font-size: 1.38rem; }
-            textarea{ height:100px;}
-        }
+      :root {
+        --primary: #d81b60;
+        --primary-dark: #c2185b;
+        --gradient-start: #e0f7fa;
+        --gradient-end: #fce4ec;
+        --radius: 14px;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        padding: 1rem;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: var(--radius);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        padding: 2rem;
+        max-width: 650px;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes slideInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      h1 {
+        color: var(--primary);
+        text-align: center;
+        font-size: 1.9rem;
+        margin-bottom: 0;
+      }
+
+      .desc {
+        text-align: center;
+        color: #555;
+        font-size: 1rem;
+        margin-bottom: 0.2rem;
+      }
+
+      textarea {
+        width: 100%;
+        height: 140px;
+        padding: 0.8rem;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        resize: vertical;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 8px rgba(216,27,96,0.2);
+        outline: none;
+      }
+
+      .btns {
+        display: flex;
+        gap: 0.8rem;
+      }
+
+      button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.75rem 1.1rem;
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.15s, box-shadow 0.3s;
+      }
+      button:disabled {
+        background: #f8bbd0;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+      button:not(:disabled):hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      }
+
+      #informe {
+        margin-top: 0.5rem;
+        background: #f9f9fb;
+        padding: 1rem;
+        border-left: 4px solid var(--primary);
+        border-radius: 6px;
+        min-height: 80px;
+        max-height: 320px;
+        white-space: pre-wrap;
+        overflow-y: auto;
+        font-size: 1.04rem;
+        opacity: 0;
+      }
+      #informe.show { animation: slideInUp 0.8s forwards; opacity: 1; }
+
+      .copiado {
+        color: #388e3c;
+        font-size: 0.92rem;
+        margin-top: 0.25rem;
+        text-align: right;
+        transition: opacity 0.4s;
+      }
+
+      @media (max-width: 700px) {
+        .card { padding: 1.3rem; }
+        h1 { font-size: 1.5rem; }
+        textarea { height: 100px; }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="card">
-        <h1>Generador de Prompts para Psicólogo</h1>
-        <div class="desc">Escribí cómo te sentís y recibí un prompt listo para IA, claro y personalizado.</div>
-        <textarea id="entrada" placeholder="Describí tus pensamientos y emociones de hoy..."></textarea>
-        <div class="btns">
-            <button id="generar" disabled>Generar Prompt</button>
-            <button id="copiar" style="display:none;">Copiar</button>
-        </div>
-        <div id="informe"></div>
-        <div id="copiado" class="copiado" style="opacity:0;"></div>
+      <h1>Generador de Prompts para Psicólogo</h1>
+      <p class="desc">Escribí cómo te sentís y recibí un prompt listo para IA, claro y personalizado.</p>
+      <textarea id="entrada" placeholder="Describe tus emociones y pensamientos..." aria-label="Describe tus emociones y pensamientos"></textarea>
+      <div class="btns">
+        <button id="generar" disabled>Generar Prompt</button>
+        <button id="copiar" style="display: none;">Copiar</button>
+      </div>
+      <div id="informe" aria-live="polite"></div>
+      <div id="copiado" class="copiado" style="opacity: 0;"></div>
     </div>
     <script>
+      (function(){
         const entradaEl = document.getElementById('entrada');
         const genBtn = document.getElementById('generar');
         const copiarBtn = document.getElementById('copiar');
         const informeEl = document.getElementById('informe');
         const copiadoEl = document.getElementById('copiado');
 
-        // Habilita botón sólo si hay texto
+        // Habilitar/deshabilitar botón en función del contenido de la entrada
         entradaEl.addEventListener('input', () => {
-            genBtn.disabled = entradaEl.value.trim() === '';
-            copiarBtn.style.display = 'none';
-            informeEl.textContent = '';
-            informeEl.classList.remove('show');
+          const hasText = entradaEl.value.trim() !== '';
+          genBtn.disabled = !hasText;
+          copiarBtn.style.display = 'none';
+          informeEl.textContent = '';
+          informeEl.classList.remove('show');
+          copiadoEl.style.opacity = 0;
         });
 
-        genBtn.addEventListener('click', () => {
-            const userText = entradaEl.value.trim();
-            if (!userText) return;
-            genBtn.disabled = true;
-            const prompt = generarPrompt(userText);
-            mostrarPrompt(prompt);
-            copiarBtn.style.display = 'inline-flex';
-            genBtn.disabled = false;
+        // Generar prompt con efecto de escritura
+        genBtn.addEventListener('click', async () => {
+          const userText = entradaEl.value.trim();
+          if (!userText) return;
+          genBtn.disabled = true;
+          copiarBtn.style.display = 'none';
+          informeEl.classList.remove('show');
+          informeEl.textContent = '';
+          copiadoEl.style.opacity = 0;
+          const prompt = generarPrompt(userText);
+          await typePrompt(prompt);
+          informeEl.classList.add('show');
+          copiarBtn.style.display = 'inline-flex';
+          genBtn.disabled = false;
         });
 
+        // Copiar contenido al portapapeles y mostrar confirmación
         copiarBtn.addEventListener('click', () => {
-            const text = informeEl.textContent;
-            if (!text) return;
-            navigator.clipboard.writeText(text).then(()=>{
-                copiadoEl.textContent = '¡Prompt copiado!';
-                copiadoEl.style.opacity = 1;
-                setTimeout(() => { copiadoEl.style.opacity = 0; }, 1700);
-            });
+          const text = informeEl.textContent;
+          if (!text) return;
+          navigator.clipboard.writeText(text).then(() => {
+            copiadoEl.textContent = '¡Prompt copiado!';
+            copiadoEl.style.opacity = 1;
+            setTimeout(() => { copiadoEl.style.opacity = 0; }, 1700);
+          });
         });
 
-        // Prompt mejorado
         function generarPrompt(text) {
-            return `Eres mi voz interior dialogando con mi psicólogo. Basado en estos pensamientos y emociones: "${text}", redacta en primera persona un párrafo breve, sincero y concreto que exprese con claridad mi estado emocional y mental en este momento. Sé directo, auténtico y evita saludos, explicaciones innecesarias o frases de relleno.`;
+          return `Eres mi voz interior dialogando con mi psicólogo. Basado en estos pensamientos y emociones: "${text}", redacta en primera persona un párrafo breve, sincero y concreto que exprese con claridad mi estado emocional y mental en este momento. Sé directo, auténtico y evita saludos, explicaciones innecesarias o frases de relleno.`;
         }
 
-        function mostrarPrompt(promptText) {
+        // Muestra el prompt escribiendo letra por letra
+        function typePrompt(text) {
+          return new Promise(resolve => {
+            let i = 0;
             informeEl.textContent = '';
-            informeEl.classList.remove('show');
-            setTimeout(()=>{
-                informeEl.textContent = promptText;
-                informeEl.classList.add('show');
-            }, 150);
+            function typeChar() {
+              informeEl.textContent += text.charAt(i);
+              i++;
+              if (i < text.length) {
+                setTimeout(typeChar, 20);
+              } else {
+                resolve();
+              }
+            }
+            typeChar();
+          });
         }
+      })();
     </script>
-</body>
+  </body>
 </html>

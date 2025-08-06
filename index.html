@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--
       Archivo mejorado para el proyecto informe.psicologo.
-      Optimiza el diseño del generador de prompts y agrega
-      animaciones y efectos adicionales como una escritura
-      progresiva del texto generado y retroalimentación visual
-      al copiar el contenido. Se emplean variables CSS para
-      facilitar la personalización de colores y estilos.
+      Genera un prompt detallado para que una IA (como ChatGPT)
+      redacte el texto exacto que el usuario puede decirle a su psicólogo.
     -->
     <title>Generador de Prompts para Psicólogo</title>
     <!-- Tipografía -->
@@ -154,7 +151,7 @@
   <body>
     <div class="card">
       <h1>Generador de Prompts para Psicólogo</h1>
-      <p class="desc">Escribí cómo te sentís y recibí un prompt listo para IA, claro y personalizado.</p>
+      <p class="desc">Escribe cómo te sientes y crea un prompt para que una IA (como ChatGPT) redacte el texto perfecto para tu psicólogo.</p>
       <textarea id="entrada" placeholder="Describe tus emociones y pensamientos..." aria-label="Describe tus emociones y pensamientos"></textarea>
       <div class="btns">
         <button id="generar" disabled>Generar Prompt</button>
@@ -190,7 +187,7 @@
           informeEl.classList.remove('show');
           informeEl.textContent = '';
           copiadoEl.style.opacity = 0;
-          const prompt = generarPrompt(userText);
+          const prompt = generarPrompt(userText); // Llamamos a la función de generar prompt
           await typePrompt(prompt);
           informeEl.classList.add('show');
           copiarBtn.style.display = 'inline-flex';
@@ -201,27 +198,58 @@
         copiarBtn.addEventListener('click', () => {
           const text = informeEl.textContent;
           if (!text) return;
-          navigator.clipboard.writeText(text).then(() => {
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          textArea.style.position = "fixed";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          try {
+            document.execCommand('copy');
             copiadoEl.textContent = '¡Prompt copiado!';
             copiadoEl.style.opacity = 1;
             setTimeout(() => { copiadoEl.style.opacity = 0; }, 1700);
-          });
+          } catch (err) {
+            console.error('No se pudo copiar el texto: ', err);
+          }
+          document.body.removeChild(textArea);
         });
 
+        /**
+         * @param {string} text El texto ingresado por el usuario.
+         * @returns {string} Un prompt detallado para una IA.
+         */
         function generarPrompt(text) {
-          return `Eres mi voz interior dialogando con mi psicólogo. Basado en estos pensamientos y emociones: "${text}", redacta en primera persona un párrafo breve, sincero y concreto que exprese con claridad mi estado emocional y mental en este momento. Sé directo, auténtico y evita saludos, explicaciones innecesarias o frases de relleno.`;
+          // Este prompt está diseñado para darle a la IA un rol, un contexto claro
+          // y restricciones específicas para que genere el texto ideal.
+          return `Actúa como un asistente empático y experto en comunicación. Mi objetivo es comunicarle a mi psicólogo cómo me siento, pero me cuesta encontrar las palabras.
+
+Basado en mis siguientes pensamientos y emociones, que te proporciono de forma desordenada y sincera:
+"${text}"
+
+Tu tarea es redactar en primera persona el párrafo exacto que podría decirle a mi psicólogo.
+
+Requisitos del texto final:
+- Debe ser claro, directo y conciso.
+- Tiene que sonar auténtico y reflejar sinceridad.
+- No incluyas saludos, despedidas, ni explicaciones sobre el propósito del texto.
+- Simplemente, entrégame el párrafo listo para que yo lo pueda leer o enviar.`;
         }
 
-        // Muestra el prompt escribiendo letra por letra
+        /**
+         * Muestra el texto generado con un efecto de escritura, letra por letra.
+         * @param {string} text El texto a mostrar.
+         * @returns {Promise<void>}
+         */
         function typePrompt(text) {
           return new Promise(resolve => {
             let i = 0;
             informeEl.textContent = '';
             function typeChar() {
-              informeEl.textContent += text.charAt(i);
-              i++;
               if (i < text.length) {
-                setTimeout(typeChar, 20);
+                informeEl.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeChar, 15); // Un poco más rápido
               } else {
                 resolve();
               }

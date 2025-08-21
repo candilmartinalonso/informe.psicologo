@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asistente de Comunicación para Terapia</title>
+    <title>Generador de Prompts para Terapia</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -44,28 +44,19 @@
         .fade-in {
             animation: fadeIn 0.5s ease-out forwards;
         }
-        
-        /* Animación de giro para el spinner */
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
 
         /* Estilos para la barra de desplazamiento */
-        #respuesta-container::-webkit-scrollbar {
+        .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
-        #respuesta-container::-webkit-scrollbar-track {
+        .custom-scrollbar::-webkit-scrollbar-track {
             background: transparent;
         }
-        #respuesta-container::-webkit-scrollbar-thumb {
+        .custom-scrollbar::-webkit-scrollbar-thumb {
             background-color: #cbd5e1; /* slate-300 */
             border-radius: 20px;
         }
-        .dark #respuesta-container::-webkit-scrollbar-thumb {
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
             background-color: #475569; /* slate-600 */
         }
     </style>
@@ -93,13 +84,13 @@
             <main class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 sm:p-8 space-y-6">
                 <!-- Introducción -->
                 <div>
-                    <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-200">Describe tus pensamientos y emociones</h2>
-                    <p class="text-slate-500 dark:text-slate-400 mt-1">Vuelca aquí tus ideas sin filtro. La IA te ayudará a estructurarlas en un mensaje claro y sincero para tu psicólogo.</p>
+                    <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-200">1. Describe tus pensamientos y emociones</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-1">Vuelca aquí tus ideas sin filtro. La herramienta creará un prompt para que una IA (como ChatGPT) redacte un mensaje claro para tu psicólogo.</p>
                 </div>
 
                 <!-- Área de texto del usuario -->
                 <div class="relative">
-                    <textarea id="entrada-usuario" rows="8" class="w-full p-4 bg-slate-100 dark:bg-slate-700 border-2 border-transparent rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 resize-none" placeholder="Ej: Últimamente me siento muy ansioso/a, sobre todo por las mañanas. Me cuesta concentrarme en el trabajo y no duermo bien..."></textarea>
+                    <textarea id="entrada-usuario" rows="8" class="w-full p-4 bg-slate-100 dark:bg-slate-700 border-2 border-transparent rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 resize-none custom-scrollbar" placeholder="Ej: Últimamente me siento muy ansioso/a, sobre todo por las mañanas. Me cuesta concentrarme en el trabajo y no duermo bien..."></textarea>
                      <button id="clear-btn" title="Limpiar texto" class="absolute bottom-3 right-3 p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 opacity-0 pointer-events-none">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
@@ -108,20 +99,21 @@
                 <!-- Botón de acción -->
                 <div class="text-center">
                     <button id="generar-btn" class="w-full sm:w-auto bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:ring-offset-slate-900 transition-all duration-200 disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto">
-                        <svg id="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3.2a1 1 0 0 0-1.4 0l-10 10a1 1 0 0 0 0 1.4l2.5 2.5a1 1 0 0 0 1.4 0l10-10a1 1 0 0 0 0-1.4Z"/><path d="m13.5 6.5 5 5"/></svg>
-                        <span id="btn-text">Redactar Mensaje</span>
-                        <svg id="btn-spinner" class="w-5 h-5 spinner hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3.2a1 1 0 0 0-1.4 0l-10 10a1 1 0 0 0 0 1.4l2.5 2.5a1 1 0 0 0 1.4 0l10-10a1 1 0 0 0 0-1.4Z"/><path d="m13.5 6.5 5 5"/></svg>
+                        <span>Generar Prompt para IA</span>
                     </button>
                 </div>
 
                 <!-- Contenedor de resultados -->
                 <div id="resultado-wrapper" class="hidden">
                     <div class="border-t border-slate-200 dark:border-slate-700 my-6"></div>
-                    <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-3">Mensaje sugerido:</h2>
-                    <div id="respuesta-container" class="relative bg-slate-50 dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-700 rounded-lg min-h-[150px] max-h-72 overflow-y-auto">
-                        <p id="respuesta-ia" class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed"></p>
+                    <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-3">2. Copia este prompt y pégalo en tu IA preferida:</h2>
+                    <div class="relative bg-slate-50 dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
+                        <div id="respuesta-container" class="min-h-[150px] max-h-72 overflow-y-auto custom-scrollbar">
+                            <p id="respuesta-ia" class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed"></p>
+                        </div>
                         <div id="copy-container" class="absolute top-2 right-2 opacity-0 transition-opacity duration-300">
-                            <button id="copiar-btn" title="Copiar mensaje" class="p-2 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition duration-200">
+                            <button id="copiar-btn" title="Copiar prompt" class="p-2 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition duration-200">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600 dark:text-slate-300">
                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -130,15 +122,13 @@
                         </div>
                     </div>
                 </div>
-                 <!-- Mensaje de error -->
-                <div id="error-message" class="hidden text-center text-red-500 bg-red-100 dark:bg-red-900/30 p-3 rounded-lg"></div>
             </main>
         </div>
     </div>
 
     <!-- Toast de notificación -->
     <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 py-2 px-5 rounded-full text-sm opacity-0 pointer-events-none transform translate-y-5 transition-all duration-300">
-        <p>¡Mensaje copiado!</p>
+        <p>¡Prompt copiado!</p>
     </div>
 
     <script>
@@ -146,16 +136,12 @@
         // --- Referencias a elementos del DOM ---
         const entradaUsuarioEl = document.getElementById('entrada-usuario');
         const generarBtn = document.getElementById('generar-btn');
-        const btnText = document.getElementById('btn-text');
-        const btnIcon = document.getElementById('btn-icon');
-        const btnSpinner = document.getElementById('btn-spinner');
         const resultadoWrapper = document.getElementById('resultado-wrapper');
         const respuestaIAEl = document.getElementById('respuesta-ia');
         const copiarBtn = document.getElementById('copiar-btn');
         const copyContainer = document.getElementById('copy-container');
         const toastEl = document.getElementById('toast');
         const clearBtn = document.getElementById('clear-btn');
-        const errorMessageEl = document.getElementById('error-message');
         
         // --- Referencias para el selector de tema ---
         const themeToggle = document.getElementById('theme-toggle');
@@ -204,7 +190,6 @@
         const clearInput = () => {
             entradaUsuarioEl.value = '';
             resultadoWrapper.classList.add('hidden');
-            errorMessageEl.classList.add('hidden');
             toggleButtons();
             entradaUsuarioEl.focus();
         };
@@ -244,115 +229,47 @@
         };
 
         /**
-         * Establece el estado de carga de la aplicación.
-         * @param {boolean} isLoading - Si la aplicación está cargando.
+         * Construye y muestra el prompt para la IA.
          */
-        const setLoadingState = (isLoading) => {
-            generarBtn.disabled = isLoading;
-            btnText.classList.toggle('hidden', isLoading);
-            btnIcon.classList.toggle('hidden', isLoading);
-            btnSpinner.classList.toggle('hidden', !isLoading);
-            entradaUsuarioEl.disabled = isLoading;
-        };
-        
-        /**
-         * Muestra un mensaje de error.
-         * @param {string} message - El mensaje de error a mostrar.
-         */
-        const mostrarError = (message) => {
-            errorMessageEl.textContent = message;
-            errorMessageEl.classList.remove('hidden');
-            resultadoWrapper.classList.add('hidden');
-        };
-
-        /**
-         * Llama a la IA para generar el mensaje.
-         */
-        const generarMensaje = async () => {
+        const generarPrompt = () => {
             const textoUsuario = entradaUsuarioEl.value.trim();
             if (!textoUsuario) return;
-
-            setLoadingState(true);
-            errorMessageEl.classList.add('hidden');
-            resultadoWrapper.classList.add('hidden');
             
-            const prompt = `Actúa como un asistente de comunicación empático y experto. Mi objetivo es comunicarle a mi psicólogo cómo me he sentido, pero me cuesta encontrar las palabras adecuadas. A partir de mis siguientes pensamientos y emociones, que te proporciono de forma desordenada y sincera:
+            const prompt = `Actúa como mi asistente personal para organizar mis pensamientos. Quiero escribirle a mi psicólogo, pero mis ideas están desordenadas. Tu objetivo es ayudarme a crear un mensaje que suene 100% como yo: natural, humano y sincero.
+
+Aquí están mis notas en bruto sobre cómo me he sentido:
 ---
 "${textoUsuario}"
 ---
-Tu tarea es redactar en primera persona el párrafo exacto que podría decirle o enviarle a mi psicólogo.
-Requisitos del texto final:
-- Debe ser claro, directo y conciso.
-- Tiene que sonar auténtico y reflejar sinceridad.
-- La estructura debe ser coherente, organizando mis ideas de forma lógica.
-- No incluyas saludos, despedidas, ni explicaciones sobre el propósito del texto (ej. "Aquí te envío un resumen...").
-- Simplemente, entrégame el párrafo listo para que yo lo pueda usar directamente.`;
 
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                const payload = { contents: chatHistory };
-                const apiKey = "" 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-                
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+A partir de esto, redacta en primera persona el mensaje que podría enviarle.
 
-                if (!response.ok) {
-                    throw new Error(`Error de la API: ${response.statusText}`);
-                }
-                
-                const result = await response.json();
+**Instrucciones clave para el tono y estilo:**
+1.  **Lenguaje Cotidiano:** Usa palabras sencillas y un tono conversacional, como si estuviera hablando con alguien de confianza.
+2.  **Voz Auténtica:** El texto debe reflejar vulnerabilidad y honestidad. No lo hagas sonar perfecto o demasiado pulido. Está bien si incluye frases que muestren duda o reflexión, como "siento que...", "es como si..." o "me he dado cuenta de que...".
+3.  **Enfoque en el Sentimiento:** Prioriza la expresión de emociones y percepciones personales por encima de una descripción fría de los hechos.
+4.  **Estructura Orgánica:** Ordena mis ideas para que el mensaje sea claro, pero que fluya de manera natural, no como un informe rígido.
+5.  **Directo al grano:** No incluyas saludos, introducciones ("quería contarte que...") ni despedidas. Solo el párrafo central, listo para que yo lo copie y pegue.`;
 
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    mostrarRespuesta(text.trim());
-                } else {
-                    throw new Error("La respuesta de la IA no tuvo el formato esperado.");
-                }
-
-            } catch (error) {
-                console.error("Error al generar el mensaje:", error);
-                mostrarError("No se pudo generar el mensaje. Por favor, inténtalo de nuevo más tarde.");
-            } finally {
-                setLoadingState(false);
-            }
+            mostrarRespuesta(prompt);
         };
 
         /**
-         * Muestra la respuesta con un efecto de escritura.
-         * @param {string} text - El texto a mostrar.
+         * Muestra la respuesta (el prompt) en el área de resultados.
+         * @param {string} text - El texto del prompt a mostrar.
          */
         const mostrarRespuesta = (text) => {
             resultadoWrapper.classList.remove('hidden');
             resultadoWrapper.classList.add('fade-in');
-            respuestaIAEl.textContent = '';
-            copyContainer.classList.add('opacity-0');
-
-            let i = 0;
-            function typeWriter() {
-                if (i < text.length) {
-                    respuestaIAEl.textContent += text.charAt(i);
-                    i++;
-                    // Acelera la escritura para textos largos
-                    const delay = text.length > 200 ? 5 : 15;
-                    setTimeout(typeWriter, delay);
-                } else {
-                    // Muestra el botón de copiar cuando termina
-                    copyContainer.classList.remove('opacity-0');
-                }
-            }
-            typeWriter();
+            respuestaIAEl.textContent = text;
+            copyContainer.classList.remove('opacity-0');
+            // Hacer scroll hacia el resultado
+            resultadoWrapper.scrollIntoView({ behavior: 'smooth', block: 'end' });
         };
 
         // --- Asignación de Eventos ---
         entradaUsuarioEl.addEventListener('input', toggleButtons);
-        generarBtn.addEventListener('click', generarMensaje);
+        generarBtn.addEventListener('click', generarPrompt);
         copiarBtn.addEventListener('click', copiarTexto);
         clearBtn.addEventListener('click', clearInput);
 

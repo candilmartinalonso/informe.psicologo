@@ -1,282 +1,120 @@
 <!DOCTYPE html>
-<html lang="es" class="">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Prompts para Terapia</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <script>
-        // Configuración de Tailwind para el modo oscuro
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
-    
-    <style>
-        /* Estilos base y personalizados */
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Estilo para el placeholder del textarea */
-        textarea::placeholder {
-            color: #94a3b8; /* slate-400 */
-        }
-        .dark textarea::placeholder {
-            color: #64748b; /* slate-500 */
-        }
-
-        /* Animación para la aparición suave de elementos */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        /* Estilos para la barra de desplazamiento */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1; /* slate-300 */
-            border-radius: 20px;
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #475569; /* slate-600 */
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Generador de prompts personalizados para informes de psicoterapia en primera persona, fácil de usar y accesible.">
+  <title>Generador de Prompts para Terapia</title>
+  <link rel="icon" href="🧠">
+  <style>
+    :root {
+      --bg:#f5f6fa; --main:#273c75; --accent:#44bd32; --danger:#e84118; --shadow:rgba(44,62,80,.08);
+    }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background:var(--bg); color:var(--main); margin:0; }
+    .container { max-width: 650px; margin: 50px auto; background: #fff; border-radius:18px; box-shadow:0 1px 10px var(--shadow); padding:2.5rem; }
+    h1 { text-align:center; }
+    textarea { width:100%; min-height:100px; border: 1.2px solid #cfcfcf; border-radius:6px; padding:12px; font-size:1.1em; margin-bottom:1rem; }
+    select,button { outline: none; border-radius:6px; border:1px solid #cfcfcf; font-size:.96em; padding:7px 18px; margin-right:8px; }
+    button { background: var(--main); color:#fff; font-weight:bold; cursor:pointer; transition:.13s; }
+    button:hover { background: var(--accent);}
+    .row { margin-bottom:1.5rem; }
+    label { font-weight: bold; }
+    #output { background:#f7f9fa; border:1px dashed #b5bec8; padding:1em; border-radius:7px; min-height:60px; margin-bottom:1rem; font-size:1.07em;}
+    .footer {text-align:center;margin-top:2rem;color:#868686;font-size:0.97em;}
+    @media(max-width:700px){.container{padding:1.2rem;margin:20px 0}}
+  </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300">
-
-    <!-- Contenedor principal -->
-    <div class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
-        
-        <!-- Contenedor del contenido -->
-        <div class="w-full max-w-3xl mx-auto space-y-8">
-            
-            <!-- Encabezado y selector de tema -->
-            <header class="flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <svg class="w-8 h-8 text-blue-600 dark:text-blue-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.5A4.5 4.5 0 0 0 18 5c-1.5 0-2.75 1.06-4 1.06-1.25 0-2.5-1.06-4-1.06-3 0-6 8-6 12.5A4.5 4.5 0 0 0 6 18.5c1.25 0 2.5-1.06 4-1.06Z"/><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.5A4.5 4.5 0 0 0 18 5c-1.5 0-2.75 1.06-4 1.06-1.25 0-2.5-1.06-4-1.06-3 0-6 8-6 12.5A4.5 4.5 0 0 0 6 18.5c1.25 0 2.5-1.06 4-1.06Z"/></svg>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-700 dark:text-slate-200">Asistente de Terapia</h1>
-                </div>
-                <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-                    <svg id="theme-icon-light" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.95-4.243l-1.59-1.59M3 12h2.25m.386-6.364l1.59 1.591M12 12a6 6 0 100-12 6 6 0 000 12z" /></svg>
-                    <svg id="theme-icon-dark" class="w-6 h-6 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>
-                </button>
-            </header>
-
-            <main class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 sm:p-8 space-y-6">
-                <!-- Introducción -->
-                <div>
-                    <h2 class="text-xl font-semibold text-slate-700 dark:text-slate-200">1. Describe tus pensamientos y emociones</h2>
-                    <p class="text-slate-500 dark:text-slate-400 mt-1">Vuelca aquí tus ideas sin filtro. La herramienta creará un prompt para que una IA (como ChatGPT) redacte un mensaje claro para tu psicólogo.</p>
-                </div>
-
-                <!-- Área de texto del usuario -->
-                <div class="relative">
-                    <textarea id="entrada-usuario" rows="8" class="w-full p-4 bg-slate-100 dark:bg-slate-700 border-2 border-transparent rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 resize-none custom-scrollbar" placeholder="Ej: Últimamente me siento muy ansioso/a, sobre todo por las mañanas. Me cuesta concentrarme en el trabajo y no duermo bien..."></textarea>
-                     <button id="clear-btn" title="Limpiar texto" class="absolute bottom-3 right-3 p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200 opacity-0 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                </div>
-
-                <!-- Botón de acción -->
-                <div class="text-center">
-                    <button id="generar-btn" class="w-full sm:w-auto bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:ring-offset-slate-900 transition-all duration-200 disabled:bg-slate-400 dark:disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3.2a1 1 0 0 0-1.4 0l-10 10a1 1 0 0 0 0 1.4l2.5 2.5a1 1 0 0 0 1.4 0l10-10a1 1 0 0 0 0-1.4Z"/><path d="m13.5 6.5 5 5"/></svg>
-                        <span>Generar Prompt para IA</span>
-                    </button>
-                </div>
-
-                <!-- Contenedor de resultados -->
-                <div id="resultado-wrapper" class="hidden">
-                    <div class="border-t border-slate-200 dark:border-slate-700 my-6"></div>
-                    <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-3">2. Copia este prompt y pégalo en tu IA preferida:</h2>
-                    <div class="relative bg-slate-50 dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-700 rounded-lg">
-                        <div id="respuesta-container" class="min-h-[150px] max-h-72 overflow-y-auto custom-scrollbar">
-                            <p id="respuesta-ia" class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed"></p>
-                        </div>
-                        <div id="copy-container" class="absolute top-2 right-2 opacity-0 transition-opacity duration-300">
-                            <button id="copiar-btn" title="Copiar prompt" class="p-2 bg-white/50 dark:bg-slate-700/50 backdrop-blur-sm rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition duration-200">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-600 dark:text-slate-300">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+<body>
+  <div class="container" role="main">
+    <h1>🧠 Generador de Prompts para Terapia</h1>
+    <form id="promptForm" autocomplete="off" aria-label="Formulario para generar prompt">
+      <div class="row">
+        <label for="emotion">Tono/Emoción deseada:</label>
+        <select id="emotion">
+          <option value="natural">Natural y honesto</option>
+          <option value="positivo">Más optimista</option>
+          <option value="reflexivo">Reflexivo</option>
+          <option value="ansioso">Ansioso</option>
+          <option value="triste">Triste</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="rawNotes">Describe tus pensamientos y emociones: <span style="color:var(--danger)">*</span></label>
+        <textarea id="rawNotes" required placeholder="Vuelca aquí tus ideas sin filtro."></textarea>
+      </div>
+      <div class="row">
+        <button id="generateBtn" type="button">Generar prompt</button>
+        <button id="clearBtn" type="button" aria-label="Limpiar todo">Limpiar</button>
+      </div>
+      <div class="row" style="display:none" id="outputSection">
+        <label>Prompt listo para IA:</label>
+        <div id="output" contenteditable="true" aria-live="polite"></div>
+        <button id="copyBtn" type="button" aria-label="Copiar prompt">Copiar</button>
+        <button id="downloadBtn" type="button" aria-label="Exportar a TXT">Exportar TXT</button>
+      </div>
+      <div class="row" id="msg" style="color:var(--accent);font-weight:bold"></div>
+    </form>
+    <div class="footer">
+      Proyecto abierto por <a href="https://github.com/candilmartinalonso/informe.psicologo" target="_blank">candilmartinalonso</a>
     </div>
+  </div>
+  <script>
+    const rawNotes = document.getElementById('rawNotes');
+    const emotion = document.getElementById('emotion');
+    const generateBtn = document.getElementById('generateBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const outputSection = document.getElementById('outputSection');
+    const output = document.getElementById('output');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const msg = document.getElementById('msg');
 
-    <!-- Toast de notificación -->
-    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 py-2 px-5 rounded-full text-sm opacity-0 pointer-events-none transform translate-y-5 transition-all duration-300">
-        <p>¡Prompt copiado!</p>
-    </div>
+    function buildPrompt(text, style){
+      let instrucciones = {
+        natural: "El mensaje debe sonar natural, honesto, y con palabras sencillas, mostrando vulnerabilidad y sentimientos.",
+        positivo: "Dale un toque optimista, resaltando logros y esperanzas sin perder autenticidad.",
+        reflexivo: "Enfatiza la introspección y las ideas profundas, cuidando que suene sincero, no perfecto.",
+        ansioso: "Permite mostrar dudas, inquietud o ansiedad con lenguaje genuino, plasmando preocupaciones reales.",
+        triste: "Refleja tristeza o desánimo auténticos, usando frases cortas y mostrando vulnerabilidad.",
+      };
+      return `Actúa como asistente personal para organizar mis ideas y emociones. Quiero escribirle a mi psicólogo, pero mis pensamientos están desordenados.\n---\nEstas son mis notas en bruto:\n"${text.trim()}"\n---\nRedacta en primera persona el mensaje central, en tono "${style}". ${instrucciones[style]}\nNo agregues saludos ni despedidas. Solo un párrafo sincero, listo para copiar y pegar.`;
+    }
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- Referencias a elementos del DOM ---
-        const entradaUsuarioEl = document.getElementById('entrada-usuario');
-        const generarBtn = document.getElementById('generar-btn');
-        const resultadoWrapper = document.getElementById('resultado-wrapper');
-        const respuestaIAEl = document.getElementById('respuesta-ia');
-        const copiarBtn = document.getElementById('copiar-btn');
-        const copyContainer = document.getElementById('copy-container');
-        const toastEl = document.getElementById('toast');
-        const clearBtn = document.getElementById('clear-btn');
-        
-        // --- Referencias para el selector de tema ---
-        const themeToggle = document.getElementById('theme-toggle');
-        const lightIcon = document.getElementById('theme-icon-light');
-        const darkIcon = document.getElementById('theme-icon-dark');
-
-        let toastTimeout;
-
-        // --- Lógica del Selector de Tema (Modo Oscuro/Claro) ---
-        const updateTheme = () => {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                lightIcon.classList.add('hidden');
-                darkIcon.classList.remove('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                lightIcon.classList.remove('hidden');
-                darkIcon.classList.add('hidden');
-            }
-        };
-
-        themeToggle.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.theme = isDark ? 'light' : 'dark';
-            updateTheme();
-        });
-
-        // --- Lógica Principal de la Aplicación ---
-
-        /**
-         * Habilita o deshabilita el botón de generar y muestra/oculta el botón de limpiar.
-         */
-        const toggleButtons = () => {
-            const hasText = entradaUsuarioEl.value.trim() !== '';
-            generarBtn.disabled = !hasText;
-            if (hasText) {
-                clearBtn.classList.remove('opacity-0', 'pointer-events-none');
-            } else {
-                clearBtn.classList.add('opacity-0', 'pointer-events-none');
-            }
-        };
-
-        /**
-         * Limpia el área de texto y oculta los resultados.
-         */
-        const clearInput = () => {
-            entradaUsuarioEl.value = '';
-            resultadoWrapper.classList.add('hidden');
-            toggleButtons();
-            entradaUsuarioEl.focus();
-        };
-
-        /**
-         * Muestra un toast de notificación.
-         */
-        const mostrarToast = () => {
-            clearTimeout(toastTimeout);
-            toastEl.classList.remove('opacity-0', 'translate-y-5');
-            toastTimeout = setTimeout(() => {
-                toastEl.classList.add('opacity-0', 'translate-y-5');
-            }, 2500);
-        };
-
-        /**
-         * Copia el texto generado al portapapeles.
-         */
-        const copiarTexto = () => {
-            const texto = respuestaIAEl.textContent;
-            if (!texto) return;
-            // Usa document.execCommand para compatibilidad con el iframe
-            const textArea = document.createElement("textarea");
-            textArea.value = texto;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                mostrarToast();
-            } catch (err) {
-                console.error('No se pudo copiar el texto: ', err);
-            }
-            document.body.removeChild(textArea);
-        };
-
-        /**
-         * Construye y muestra el prompt para la IA.
-         */
-        const generarPrompt = () => {
-            const textoUsuario = entradaUsuarioEl.value.trim();
-            if (!textoUsuario) return;
-            
-            const prompt = `Actúa como mi asistente personal para organizar mis pensamientos. Quiero escribirle a mi psicólogo, pero mis ideas están desordenadas. Tu objetivo es ayudarme a crear un mensaje que suene 100% como yo: natural, humano y sincero.
-
-Aquí están mis notas en bruto sobre cómo me he sentido:
----
-"${textoUsuario}"
----
-
-A partir de esto, redacta en primera persona el mensaje que podría enviarle.
-
-**Instrucciones clave para el tono y estilo:**
-1.  **Lenguaje Cotidiano:** Usa palabras sencillas y un tono conversacional, como si estuviera hablando con alguien de confianza.
-2.  **Voz Auténtica:** El texto debe reflejar vulnerabilidad y honestidad. No lo hagas sonar perfecto o demasiado pulido. Está bien si incluye frases que muestren duda o reflexión, como "siento que...", "es como si..." o "me he dado cuenta de que...".
-3.  **Enfoque en el Sentimiento:** Prioriza la expresión de emociones y percepciones personales por encima de una descripción fría de los hechos.
-4.  **Estructura Orgánica:** Ordena mis ideas para que el mensaje sea claro, pero que fluya de manera natural, no como un informe rígido.
-5.  **Directo al grano:** No incluyas saludos, introducciones ("quería contarte que...") ni despedidas. Solo el párrafo central, listo para que yo lo copie y pegue.`;
-
-            mostrarRespuesta(prompt);
-        };
-
-        /**
-         * Muestra la respuesta (el prompt) en el área de resultados.
-         * @param {string} text - El texto del prompt a mostrar.
-         */
-        const mostrarRespuesta = (text) => {
-            resultadoWrapper.classList.remove('hidden');
-            resultadoWrapper.classList.add('fade-in');
-            respuestaIAEl.textContent = text;
-            copyContainer.classList.remove('opacity-0');
-            // Hacer scroll hacia el resultado
-            resultadoWrapper.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        };
-
-        // --- Asignación de Eventos ---
-        entradaUsuarioEl.addEventListener('input', toggleButtons);
-        generarBtn.addEventListener('click', generarPrompt);
-        copiarBtn.addEventListener('click', copiarTexto);
-        clearBtn.addEventListener('click', clearInput);
-
-        // --- Estado Inicial ---
-        updateTheme();
-        toggleButtons();
+    generateBtn.addEventListener('click', ()=>{
+      msg.textContent = "";
+      if(!rawNotes.value.trim()){
+        msg.textContent = "Por favor, ingresa tus ideas antes de generar el prompt.";
+        return;
+      }
+      output.textContent = buildPrompt(rawNotes.value, emotion.value);
+      outputSection.style.display = "block";
     });
-    </script>
+
+    clearBtn.addEventListener('click', ()=>{
+      rawNotes.value = "";
+      outputSection.style.display = "none";
+      msg.textContent = "";
+    });
+
+    copyBtn.addEventListener('click', ()=>{
+      navigator.clipboard.writeText(output.textContent);
+      msg.textContent = "¡Prompt copiado!";
+      setTimeout(()=>{msg.textContent = ""}, 1600);
+    });
+
+    downloadBtn.addEventListener('click', ()=>{
+      const blob = new Blob([output.textContent], {type: "text/plain"});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "prompt_terapia.txt";
+      a.click();
+    });
+
+    // accesibilidad: enter en textarea genera prompt
+    rawNotes.addEventListener('keydown', (e)=>{
+      if(e.ctrlKey && e.key==="Enter"){generateBtn.click();}
+    });
+
+  </script>
 </body>
 </html>

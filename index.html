@@ -1,120 +1,135 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Generador de prompts personalizados para informes de psicoterapia en primera persona, fácil de usar y accesible.">
   <title>Generador de Prompts para Terapia</title>
-  <link rel="icon" href="🧠">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <style>
     :root {
-      --bg:#f5f6fa; --main:#273c75; --accent:#44bd32; --danger:#e84118; --shadow:rgba(44,62,80,.08);
+      --bg: #f5f6fa; --main: #273c75; --accent: #44bd32; --danger: #e84118; --shadow: rgba(44, 62, 80, 0.08);
     }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background:var(--bg); color:var(--main); margin:0; }
-    .container { max-width: 650px; margin: 50px auto; background: #fff; border-radius:18px; box-shadow:0 1px 10px var(--shadow); padding:2.5rem; }
-    h1 { text-align:center; }
-    textarea { width:100%; min-height:100px; border: 1.2px solid #cfcfcf; border-radius:6px; padding:12px; font-size:1.1em; margin-bottom:1rem; }
-    select,button { outline: none; border-radius:6px; border:1px solid #cfcfcf; font-size:.96em; padding:7px 18px; margin-right:8px; }
-    button { background: var(--main); color:#fff; font-weight:bold; cursor:pointer; transition:.13s; }
-    button:hover { background: var(--accent);}
-    .row { margin-bottom:1.5rem; }
-    label { font-weight: bold; }
-    #output { background:#f7f9fa; border:1px dashed #b5bec8; padding:1em; border-radius:7px; min-height:60px; margin-bottom:1rem; font-size:1.07em;}
-    .footer {text-align:center;margin-top:2rem;color:#868686;font-size:0.97em;}
-    @media(max-width:700px){.container{padding:1.2rem;margin:20px 0}}
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--main);
+      margin: 0;
+    }
+    .container {
+      max-width: 650px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 1px 10px var(--shadow);
+      padding: 2.5rem;
+    }
+    h1 {
+      text-align: center;
+    }
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      border: 1.2px solid #cfcfcf;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 1.1em;
+      margin-bottom: 1rem;
+    }
+    select, button {
+      outline: none;
+      border-radius: 6px;
+      border: 1px solid #cfcfcf;
+      font-size: .96em;
+      padding: 7px 18px;
+      margin-right: 8px;
+    }
+    select:hover, button:hover {
+      background: var(--accent);
+      color: white;
+    }
+    button {
+      background: var(--main);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .13s;
+    }
+    .row {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 0.4em;
+    }
+    #output {
+      background: #f7f9fa;
+      border: 1px dashed #b5bec8;
+      padding: 1em;
+      border-radius: 7px;
+      min-height: 60px;
+      margin-bottom: 1rem;
+      font-size: 1.07em;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #868686;
+      font-size: 0.9em;
+    }
   </style>
 </head>
 <body>
-  <div class="container" role="main">
+  <div class="container">
     <h1>🧠 Generador de Prompts para Terapia</h1>
-    <form id="promptForm" autocomplete="off" aria-label="Formulario para generar prompt">
-      <div class="row">
-        <label for="emotion">Tono/Emoción deseada:</label>
-        <select id="emotion">
-          <option value="natural">Natural y honesto</option>
-          <option value="positivo">Más optimista</option>
-          <option value="reflexivo">Reflexivo</option>
-          <option value="ansioso">Ansioso</option>
-          <option value="triste">Triste</option>
-        </select>
-      </div>
-      <div class="row">
-        <label for="rawNotes">Describe tus pensamientos y emociones: <span style="color:var(--danger)">*</span></label>
-        <textarea id="rawNotes" required placeholder="Vuelca aquí tus ideas sin filtro."></textarea>
-      </div>
-      <div class="row">
-        <button id="generateBtn" type="button">Generar prompt</button>
-        <button id="clearBtn" type="button" aria-label="Limpiar todo">Limpiar</button>
-      </div>
-      <div class="row" style="display:none" id="outputSection">
-        <label>Prompt listo para IA:</label>
-        <div id="output" contenteditable="true" aria-live="polite"></div>
-        <button id="copyBtn" type="button" aria-label="Copiar prompt">Copiar</button>
-        <button id="downloadBtn" type="button" aria-label="Exportar a TXT">Exportar TXT</button>
-      </div>
-      <div class="row" id="msg" style="color:var(--accent);font-weight:bold"></div>
-    </form>
-    <div class="footer">
-      Proyecto abierto por <a href="https://github.com/candilmartinalonso/informe.psicologo" target="_blank">candilmartinalonso</a>
+    <div class="row">
+      <label for="inputText">Describe el caso o situación:</label>
+      <textarea id="inputText" placeholder="Escribe aquí..."></textarea>
     </div>
+    <div class="row">
+      <label for="perspective">Perspectiva del informe:</label>
+      <select id="perspective">
+        <option value="primera">Primera persona</option>
+        <option value="tercera">Tercera persona</option>
+      </select>
+      <button onclick="generatePrompt()">Generar</button>
+    </div>
+    <div id="output"></div>
+    <button onclick="copyOutput()">Copiar al portapapeles</button>
+    <div class="footer">Desarrollado por un terapeuta para terapeutas 🧠</div>
   </div>
+
   <script>
-    const rawNotes = document.getElementById('rawNotes');
-    const emotion = document.getElementById('emotion');
-    const generateBtn = document.getElementById('generateBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const outputSection = document.getElementById('outputSection');
-    const output = document.getElementById('output');
-    const copyBtn = document.getElementById('copyBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const msg = document.getElementById('msg');
+    function generatePrompt() {
+      const input = document.getElementById('inputText').value.trim();
+      const perspective = document.getElementById('perspective').value;
+      const output = document.getElementById('output');
 
-    function buildPrompt(text, style){
-      let instrucciones = {
-        natural: "El mensaje debe sonar natural, honesto, y con palabras sencillas, mostrando vulnerabilidad y sentimientos.",
-        positivo: "Dale un toque optimista, resaltando logros y esperanzas sin perder autenticidad.",
-        reflexivo: "Enfatiza la introspección y las ideas profundas, cuidando que suene sincero, no perfecto.",
-        ansioso: "Permite mostrar dudas, inquietud o ansiedad con lenguaje genuino, plasmando preocupaciones reales.",
-        triste: "Refleja tristeza o desánimo auténticos, usando frases cortas y mostrando vulnerabilidad.",
-      };
-      return `Actúa como asistente personal para organizar mis ideas y emociones. Quiero escribirle a mi psicólogo, pero mis pensamientos están desordenados.\n---\nEstas son mis notas en bruto:\n"${text.trim()}"\n---\nRedacta en primera persona el mensaje central, en tono "${style}". ${instrucciones[style]}\nNo agregues saludos ni despedidas. Solo un párrafo sincero, listo para copiar y pegar.`;
-    }
-
-    generateBtn.addEventListener('click', ()=>{
-      msg.textContent = "";
-      if(!rawNotes.value.trim()){
-        msg.textContent = "Por favor, ingresa tus ideas antes de generar el prompt.";
+      if (!input) {
+        output.textContent = "Por favor, escribe una descripción primero.";
         return;
       }
-      output.textContent = buildPrompt(rawNotes.value, emotion.value);
-      outputSection.style.display = "block";
-    });
 
-    clearBtn.addEventListener('click', ()=>{
-      rawNotes.value = "";
-      outputSection.style.display = "none";
-      msg.textContent = "";
-    });
+      let prompt = "";
+      if (perspective === "primera") {
+        prompt = `Yo experimenté lo siguiente en mi proceso terapéutico: ${input}`;
+      } else {
+        prompt = `El paciente ha manifestado lo siguiente en su proceso terapéutico: ${input}`;
+      }
 
-    copyBtn.addEventListener('click', ()=>{
-      navigator.clipboard.writeText(output.textContent);
-      msg.textContent = "¡Prompt copiado!";
-      setTimeout(()=>{msg.textContent = ""}, 1600);
-    });
+      output.textContent = prompt;
+    }
 
-    downloadBtn.addEventListener('click', ()=>{
-      const blob = new Blob([output.textContent], {type: "text/plain"});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = "prompt_terapia.txt";
-      a.click();
-    });
-
-    // accesibilidad: enter en textarea genera prompt
-    rawNotes.addEventListener('keydown', (e)=>{
-      if(e.ctrlKey && e.key==="Enter"){generateBtn.click();}
-    });
-
+    function copyOutput() {
+      const output = document.getElementById('output').textContent;
+      navigator.clipboard.writeText(output).then(() => {
+        alert("Texto copiado al portapapeles.");
+      }, () => {
+        alert("Error al copiar el texto.");
+      });
+    }
   </script>
 </body>
 </html>

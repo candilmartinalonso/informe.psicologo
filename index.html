@@ -1,135 +1,182 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Generador de prompts personalizados para informes de psicoterapia en primera persona, fácil de usar y accesible.">
-  <title>Generador de Prompts para Terapia</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <style>
-    :root {
-      --bg: #f5f6fa; --main: #273c75; --accent: #44bd32; --danger: #e84118; --shadow: rgba(44, 62, 80, 0.08);
-    }
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: var(--bg);
-      color: var(--main);
-      margin: 0;
-    }
-    .container {
-      max-width: 650px;
-      margin: 50px auto;
-      background: #fff;
-      border-radius: 18px;
-      box-shadow: 0 1px 10px var(--shadow);
-      padding: 2.5rem;
-    }
-    h1 {
-      text-align: center;
-    }
-    textarea {
-      width: 100%;
-      min-height: 100px;
-      border: 1.2px solid #cfcfcf;
-      border-radius: 6px;
-      padding: 12px;
-      font-size: 1.1em;
-      margin-bottom: 1rem;
-    }
-    select, button {
-      outline: none;
-      border-radius: 6px;
-      border: 1px solid #cfcfcf;
-      font-size: .96em;
-      padding: 7px 18px;
-      margin-right: 8px;
-    }
-    select:hover, button:hover {
-      background: var(--accent);
-      color: white;
-    }
-    button {
-      background: var(--main);
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .13s;
-    }
-    .row {
-      margin-bottom: 1.5rem;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 0.4em;
-    }
-    #output {
-      background: #f7f9fa;
-      border: 1px dashed #b5bec8;
-      padding: 1em;
-      border-radius: 7px;
-      min-height: 60px;
-      margin-bottom: 1rem;
-      font-size: 1.07em;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 2rem;
-      color: #868686;
-      font-size: 0.9em;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Generador de prompts personalizados para informes de psicoterapia en primera persona, fácil de usar y accesible." />
+    <title>Generador de Prompts para Terapia</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <!-- Carga de Tailwind CSS CDN y la fuente Inter -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f6fa; /* Similar al original */
+            color: #273c75; /* Similar al original --main */
+            min-height: 100vh;
+        }
+    </style>
 </head>
-<body>
-  <div class="container">
-    <h1>🧠 Generador de Prompts para Terapia</h1>
-    <div class="row">
-      <label for="inputText">Describe el caso o situación:</label>
-      <textarea id="inputText" placeholder="Escribe aquí..."></textarea>
+<body class="p-4 sm:p-6 flex items-center justify-center">
+
+    <div id="app-container" class="w-full max-w-lg mx-auto bg-white rounded-xl shadow-xl p-6 sm:p-8">
+        <h1 class="text-3xl font-bold text-center mb-6 text-[#273c75]">🧠 Generador de Prompts para Terapia</h1>
+
+        <!-- Contenedor de Feedback Temporal -->
+        <div id="feedback-message" class="hidden p-3 mb-4 rounded-lg text-sm text-center font-medium transition-opacity duration-300"></div>
+
+        <div class="mb-6">
+            <label for="inputText" class="font-semibold mb-1 block">Describe el caso o situación:</label>
+            <textarea id="inputText" placeholder="Escribe aquí el resumen de la sesión o el caso..."
+                      class="w-full min-h-[120px] border border-gray-300 rounded-lg p-3 text-base focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-shadow"></textarea>
+        </div>
+
+        <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div class="flex-grow">
+                <label for="perspective" class="font-semibold mb-1 block">Perspectiva del informe:</label>
+                <select id="perspective" class="w-full sm:w-auto py-2 px-4 border border-gray-300 rounded-lg text-base appearance-none bg-white pr-8 shadow-sm transition duration-150 ease-in-out hover:border-indigo-500">
+                    <option value="primera">Primera persona</option>
+                    <option value="tercera">Tercera persona</option>
+                </select>
+            </div>
+            <button id="generateButton" class="bg-[#273c75] text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-[#44bd32] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#273c75] focus:ring-offset-2">
+                Generar Prompt
+            </button>
+        </div>
+
+        <div class="mb-6">
+            <label class="font-semibold mb-1 block">Prompt Generado:</label>
+            <div id="output" class="bg-gray-50 border border-dashed border-gray-400 p-4 rounded-lg min-h-[60px] text-lg text-gray-700 select-all break-words">
+                <!-- El prompt generado aparecerá aquí -->
+            </div>
+        </div>
+
+        <button id="copyButton" class="w-full bg-[#44bd32] text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-[#44bd32] focus:ring-offset-2">
+            Copiar al portapapeles
+        </button>
+
+        <footer class="text-center mt-6 text-gray-500 text-sm">
+            Desarrollado por un terapeuta para terapeutas 🧠
+        </footer>
     </div>
-    <div class="row">
-      <label for="perspective">Perspectiva del informe:</label>
-      <select id="perspective">
-        <option value="primera">Primera persona</option>
-        <option value="tercera">Tercera persona</option>
-      </select>
-      <button onclick="generatePrompt()">Generar</button>
-    </div>
-    <div id="output"></div>
-    <button onclick="copyOutput()">Copiar al portapapeles</button>
-    <div class="footer">Desarrollado por un terapeuta para terapeutas 🧠</div>
-  </div>
 
-  <script>
-    function generatePrompt() {
-      const input = document.getElementById('inputText').value.trim();
-      const perspective = document.getElementById('perspective').value;
-      const output = document.getElementById('output');
+    <script>
+        // Variables globales para elementos del DOM
+        const inputTextArea = document.getElementById('inputText');
+        const perspectiveSelect = document.getElementById('perspective');
+        const outputDiv = document.getElementById('output');
+        const generateButton = document.getElementById('generateButton');
+        const copyButton = document.getElementById('copyButton');
+        const feedbackMessage = document.getElementById('feedback-message');
 
-      if (!input) {
-        output.textContent = "Por favor, escribe una descripción primero.";
-        return;
-      }
+        /**
+         * Muestra un mensaje temporal de feedback al usuario.
+         * @param {string} message - El mensaje a mostrar.
+         * @param {string} type - 'success' o 'error'.
+         */
+        function showFeedback(message, type) {
+            feedbackMessage.textContent = message;
+            feedbackMessage.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800');
+            
+            if (type === 'success') {
+                feedbackMessage.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                feedbackMessage.classList.add('bg-red-100', 'text-red-800');
+            }
 
-      let prompt = "";
-      if (perspective === "primera") {
-        prompt = `Yo experimenté lo siguiente en mi proceso terapéutico: ${input}`;
-      } else {
-        prompt = `El paciente ha manifestado lo siguiente en su proceso terapéutico: ${input}`;
-      }
+            setTimeout(() => {
+                feedbackMessage.classList.add('hidden');
+            }, 3000);
+        }
 
-      output.textContent = prompt;
-    }
+        /**
+         * Genera el prompt basado en la entrada y la perspectiva seleccionada.
+         */
+        function generatePrompt() {
+            const input = inputTextArea.value.trim();
+            const perspective = perspectiveSelect.value;
 
-    function copyOutput() {
-      const output = document.getElementById('output').textContent;
-      navigator.clipboard.writeText(output).then(() => {
-        alert("Texto copiado al portapapeles.");
-      }, () => {
-        alert("Error al copiar el texto.");
-      });
-    }
-  </script>
+            if (!input) {
+                outputDiv.textContent = "Por favor, escribe una descripción primero.";
+                showFeedback("Debes ingresar una descripción.", 'error');
+                return;
+            }
+
+            let prompt = "";
+            if (perspective === "primera") {
+                prompt = `Yo experimenté lo siguiente en mi proceso terapéutico: ${input}`;
+            } else {
+                prompt = `El paciente ha manifestado lo siguiente en su proceso terapéutico: ${input}`;
+            }
+
+            outputDiv.textContent = prompt;
+            showFeedback("Prompt generado con éxito.", 'success');
+        }
+
+        /**
+         * Copia el texto del output al portapapeles sin usar alert().
+         */
+        async function copyOutput() {
+            const output = outputDiv.textContent.trim();
+            
+            if (!output || output === "Por favor, escribe una descripción primero." || output.includes('El prompt generado aparecerá aquí')) {
+                showFeedback("No hay un prompt válido para copiar.", 'error');
+                return;
+            }
+
+            let copySuccessful = false;
+
+            // 1. Intento con la API moderna (puede fallar por permisos en iframes)
+            try {
+                await navigator.clipboard.writeText(output);
+                copySuccessful = true;
+            } catch (err) {
+                // Se espera este error en entornos iframes debido a las políticas de seguridad.
+                // Cambiado de console.error a console.log para reducir la alarma del usuario.
+                console.log('Fallo esperado de la API moderna de Clipboard. Usando método de respaldo (execCommand).', err);
+                // Si falla, se ignora el error y se pasa al método de respaldo
+            }
+
+            // 2. Método de respaldo si la copia moderna falló
+            if (!copySuccessful) {
+                try {
+                    const tempInput = document.createElement('textarea');
+                    tempInput.value = output;
+                    
+                    // Asegurar que el textarea temporal no sea visible y no afecte el layout
+                    tempInput.style.position = 'fixed';
+                    tempInput.style.left = '-9999px';
+                    tempInput.style.top = '0';
+                    
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    
+                    // Ejecutar el comando de copia obsoleto pero confiable en iframes
+                    const successfulFallback = document.execCommand('copy');
+                    document.body.removeChild(tempInput);
+
+                    if (successfulFallback) {
+                        copySuccessful = true;
+                    }
+                } catch (fallbackErr) {
+                    console.error('Error fatal en el método de respaldo de copia:', fallbackErr);
+                }
+            }
+
+            // 3. Mostrar feedback basado en el resultado final
+            if (copySuccessful) {
+                showFeedback("✅ ¡Prompt copiado al portapapeles!", 'success');
+            } else {
+                showFeedback("❌ Falló la copia automática. Por favor, selecciona y copia el texto manualmente.", 'error');
+            }
+        }
+
+        // Asignación de event listeners al cargar el DOM (en lugar de inline onclick)
+        document.addEventListener('DOMContentLoaded', () => {
+            generateButton.addEventListener('click', generatePrompt);
+            copyButton.addEventListener('click', copyOutput);
+        });
+    </script>
 </body>
 </html>
